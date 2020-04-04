@@ -71,7 +71,7 @@ unsigned char* AES::decrypt(const unsigned char* cipherText)
 	//	and the aes.cpp example provided.
 	// 	3. Return the pointer to the plaintext
 	unsigned char *dec_out = new unsigned char[16];
-	AES_ecb_decrypt(cipherText, dec_out, &dec_key , AES_DECRYPT);
+	AES_ecb_encrypt(cipherText, dec_out, &dec_key , AES_DECRYPT);
 	return dec_out;	
 }
 
