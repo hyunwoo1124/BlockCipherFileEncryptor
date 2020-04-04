@@ -56,7 +56,7 @@ int main( )
 	// }
 	
 	// /* Decrypt! */
-	// AES_ecb_encrypt(enc_out, dec_out, &dec_key, AES_DECRYPT);
+	AES_ecb_encrypt(enc_out, dec_out, &dec_key, AES_DECRYPT);
 	
 	// fprintf(stderr, "I have encrypted and decrypted text %s. The end result is %s\n", aes_input, dec_out);
 		
