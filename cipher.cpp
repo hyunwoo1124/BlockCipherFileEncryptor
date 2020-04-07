@@ -8,7 +8,6 @@
 #include "fstream"
 using namespace std;
 
-
 int main(int argc, char** argv)
 {
 	/**
@@ -29,14 +28,12 @@ int main(int argc, char** argv)
 	string inputText = argv[4];
 	string outputText = argv[5];
 
-	
-
 	// cout << "Testing 1 - 3 " << endl;
-	// cout << "ciphername: " << ciphername << endl;
-	// cout << "key: " << key << endl;
-	// cout << "method: " << method << endl;
-	// cout << "inputText: " << inputText << endl;
-	// cout << "outputText: " << outputText << endl;
+	cout << "ciphername: " << ciphername << endl;
+	cout << "key: " << key << endl;
+	cout << "method: " << method << endl;
+	cout << "inputText: " << inputText << endl;
+	cout << "outputText: " << outputText << endl;
 
 	// ifstream inputFile;
 	// inputFile.open (inputText);
@@ -63,25 +60,27 @@ int main(int argc, char** argv)
 	/* Set the encryption key
 	
 	 * characters. Below is one example.
-	 * Your program should take input from
+	 * Your program should take input from                           
 	 * command line.
 	 */
 	cout << "Testing 1" << endl;
-	cipher->setKey((unsigned char*)"0123456789abcdef");
+	if(!cipher->setKey((unsigned char*)"0123456789abcdef")){
+		cerr << "Set Key error, code can't compile " << endl;
+	}
 	
-	// /* Perform encryption */
+	/* Perform encryption */
 	cout << "Testing 2" << endl;
-	// unsigned char* output = new unsigned char[100];
-
-	cout << "Testing 3" << endl;
-	// string output(cipher->encrypt((unsigned char*)"hello world"));
+	/*
+	Question: How do we convert from a unsigned char* to a string and print out to terminal 
+	*/
 	// string output = cipher->encrypt((unsigned char*)"hello world"));
-
-	// memcpy(output, cipher->encrypt((const unsigned char*)"helloworld"),20);
+	// unsigned char* output = new unsigned char[100];
+	// memcpy(output, cipher->encrypt((unsigned char*)"hello world"), 16);
+	// string output= (reinterpret_cast<char*>(cipher->encrypt((unsigned char*)"hello world")));
 	string output(reinterpret_cast<char*>(cipher->encrypt((unsigned char*)"hello world")));
 
-	cout << "Testing 4" << endl;
-	cout << "Output: " << output << endl; 
+	// cout << "Testing 4" << endl;
+	// cout << "Output: " << output << endl; 
 
 	// /* Perform decryption */
 	// cipher->decrypt(cipherText);	

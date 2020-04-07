@@ -25,7 +25,7 @@ bool AES::setKey(const unsigned char* keyArray)
 	// For documentation, please see https://boringssl.googlesource.com/boringssl/+/2623/include/openssl/aes.h
 	// and aes.cpp example provided with the assignment.
 	unsigned int type = keyArray[0];
-	unsigned char *key = new unsigned char[17];
+	unsigned char *key = new unsigned char[16];
 
 	for (int i  = 1; i < 17; i++) {
 		key[i] = keyArray[i];
