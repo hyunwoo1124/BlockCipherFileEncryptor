@@ -3,7 +3,11 @@
 #include "AES.h"
 #include "DES.h"
 
+#include <stdio.h>
+#include "iostream"
+#include "fstream"
 using namespace std;
+
 
 int main(int argc, char** argv)
 {
@@ -16,11 +20,35 @@ int main(int argc, char** argv)
 	 * misbehave.
 	 */
 	
+	string ciphername = argv[1];
+	// Since we are passiing const unsigned char* in the setKey function
+	// We should also saving value as const unsigned char*
+	// However, by doing this, we need to convert our input into it as well
+	const unsigned char* key = (const unsigned char*)argv[2];
+	string method = argv[3];
+	string inputText = argv[4];
+	string outputText = argv[5];
+
 	
-	
+
+	// cout << "Testing 1 - 3 " << endl;
+	// cout << "ciphername: " << ciphername << endl;
+	// cout << "key: " << key << endl;
+	// cout << "method: " << method << endl;
+	// cout << "inputText: " << inputText << endl;
+	// cout << "outputText: " << outputText << endl;
+
+	// ifstream inputFile;
+	// inputFile.open (inputText);
+	// if(!inputFile.is_open()){
+	// 	cerr << "File can't be open !!! " <<endl;
+	// }
+
 	/* Create an instance of the DES cipher */	
-	CipherInterface* cipher;  
-	AES *test;
+	CipherInterface* cipher = 0;  
+
+	cout << "Testing AES" << endl;
+	cipher = new AES();
 	
 		 
 	/* Error checks */
@@ -31,19 +59,32 @@ int main(int argc, char** argv)
 		exit(-1);
 	}
 	
+	
 	/* Set the encryption key
-	 * A valid key comprises 16 hexidecimal
+	
 	 * characters. Below is one example.
 	 * Your program should take input from
 	 * command line.
 	 */
+	cout << "Testing 1" << endl;
 	cipher->setKey((unsigned char*)"0123456789abcdef");
 	
-	/* Perform encryption */
-	string cipherText = cipher->encrypt("hello world");
-	
-	/* Perform decryption */
-	cipher->decrypt(cipherText);	
+	// /* Perform encryption */
+	cout << "Testing 2" << endl;
+	// unsigned char* output = new unsigned char[100];
+
+	cout << "Testing 3" << endl;
+	// string output(cipher->encrypt((unsigned char*)"hello world"));
+	// string output = cipher->encrypt((unsigned char*)"hello world"));
+
+	// memcpy(output, cipher->encrypt((const unsigned char*)"helloworld"),20);
+	string output(reinterpret_cast<char*>(cipher->encrypt((unsigned char*)"hello world")));
+
+	cout << "Testing 4" << endl;
+	cout << "Output: " << output << endl; 
+
+	// /* Perform decryption */
+	// cipher->decrypt(cipherText);	
 	
 	return 0;
 }

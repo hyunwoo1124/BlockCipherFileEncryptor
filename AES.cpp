@@ -1,6 +1,5 @@
 #include "AES.h"
 
-
 /**
  * Sets the key to use
  * @param key - the first byte of this represents whether
@@ -25,17 +24,22 @@ bool AES::setKey(const unsigned char* keyArray)
 	// Both functions return 0 on success and other values on faliure.
 	// For documentation, please see https://boringssl.googlesource.com/boringssl/+/2623/include/openssl/aes.h
 	// and aes.cpp example provided with the assignment.
-	char firstByte = keyArray[0];
+	unsigned int type = keyArray[0];
+	unsigned char *key = new unsigned char[17];
+
+	for (int i  = 1; i < 17; i++) {
+		key[i] = keyArray[i];
+	}
 	bool reVal = true;
 
-	if (firstByte == 0){
-		if(AES_set_encrypt_key(keyArray+1, 128, &enc_key)!=0){
+	if (type == 0){
+		if(AES_set_encrypt_key(key, 128, &enc_key)!=0){
 			cerr << "AES_set_encrypt_key() failed!\n" << endl;
 			reVal = false;
 		}
 	}
 	else{
-		if(AES_set_decrypt_key(keyArray+1, 128, &dec_key)!=0){
+		if(AES_set_decrypt_key(key, 128, &dec_key)!=0){
 			cerr << "AES_set_decrypt_key() failed!\n" << endl;
 			reVal = false;
 		}
@@ -54,9 +58,9 @@ unsigned char* AES::encrypt(const unsigned char* plainText)
 	//	2. Use AES_ecb_encrypt(...) to encrypt the text (please see the URL in setKey(...)
 	//	and the aes.cpp example provided.
 	// 	3. Return the pointer to the ciphertext
-	unsigned char *enc_out = new unsigned char[16];
-	AES_ecb_encrypt(plainText, enc_out, &enc_key , AES_ENCRYPT);
-	return enc_out;	
+	unsigned char *ciphertext = new unsigned char[16];
+	AES_ecb_encrypt(plainText, ciphertext, &enc_key , AES_ENCRYPT);
+	return ciphertext;	
 }
 
 /**
@@ -70,9 +74,9 @@ unsigned char* AES::decrypt(const unsigned char* cipherText)
 	//	2. Use AES_ecb_encrypt(...) to decrypt the text (please see the URL in setKey(...)
 	//	and the aes.cpp example provided.
 	// 	3. Return the pointer to the plaintext
-	unsigned char *dec_out = new unsigned char[16];
-	AES_ecb_encrypt(cipherText, dec_out, &dec_key , AES_DECRYPT);
-	return dec_out;	
+	unsigned char *plaintext = new unsigned char[16];
+	AES_ecb_encrypt(cipherText, plaintext, &dec_key , AES_DECRYPT);
+	return plaintext;	
 }
 
 
