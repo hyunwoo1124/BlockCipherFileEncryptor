@@ -1,5 +1,6 @@
 #include "AES.h"
 
+
 /**
  * Sets the key to use
  * @param key - the first byte of this represents whether
@@ -10,7 +11,6 @@
  */
 bool AES::setKey(const unsigned char* keyArray)
 {
-	
 	// TODO: AES implementation of openssl cares about whether
 	// you are encrypting or decrypting when setting the key.
 	// That is, when encrypting you use function AES_set_encrypt_key(...)
@@ -25,10 +25,23 @@ bool AES::setKey(const unsigned char* keyArray)
 	// Both functions return 0 on success and other values on faliure.
 	// For documentation, please see https://boringssl.googlesource.com/boringssl/+/2623/include/openssl/aes.h
 	// and aes.cpp example provided with the assignment.
-	
-	
-	return false;
-	
+
+	int type = keyArray[0];
+	bool reVal = true;
+
+	if (type == 0){
+		if(AES_set_encrypt_key(keyArray+1, 128, &enc_key)!=0){
+			cerr << "AES_set_encrypt_key() failed!\n" << endl;
+			reVal = false;
+		}
+	}
+	else{
+		if(AES_set_decrypt_key(keyArray+1, 128, &dec_key)!=0){
+			cerr << "AES_set_decrypt_key() failed!\n" << endl;
+			reVal = false;
+		}
+	}
+	return reVal;
 }
 
 /**	
@@ -38,13 +51,13 @@ bool AES::setKey(const unsigned char* keyArray)
  */
 unsigned char* AES::encrypt(const unsigned char* plainText)
 {
-	
 	//TODO: 1. Dynamically allocate a block to store the ciphertext.
 	//	2. Use AES_ecb_encrypt(...) to encrypt the text (please see the URL in setKey(...)
 	//	and the aes.cpp example provided.
 	// 	3. Return the pointer to the ciphertext
-		
-	return NULL;	
+	unsigned char *enc_out = new unsigned char[16];
+	AES_ecb_encrypt(plainText, enc_out, &enc_key , AES_ENCRYPT);
+	return enc_out;	
 }
 
 /**
@@ -54,14 +67,11 @@ unsigned char* AES::encrypt(const unsigned char* plainText)
  */
 unsigned char* AES::decrypt(const unsigned char* cipherText)
 {
-	
 	//TODO: 1. Dynamically allocate a block to store the plaintext.
 	//	2. Use AES_ecb_encrypt(...) to decrypt the text (please see the URL in setKey(...)
 	//	and the aes.cpp example provided.
 	// 	3. Return the pointer to the plaintext
-		
-	return NULL;
+	unsigned char *dec_out = new unsigned char[16];
+	AES_ecb_encrypt(cipherText, dec_out, &dec_key , AES_DECRYPT);
+	return dec_out;	
 }
-
-
-

@@ -8,6 +8,7 @@
 #include <string>
 #include "CipherInterface.h"
 #include <ctype.h>
+#include <iostream>
 
 using namespace std;
 
@@ -48,8 +49,8 @@ class AES: public CipherInterface
 			
 	/* The protected members */
 	protected:
-
 		//TODO: declare the AES key
+		AES_KEY enc_key, dec_key;
 };
 
 
