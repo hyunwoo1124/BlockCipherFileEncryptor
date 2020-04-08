@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 
 	// string output = cipher->encrypt((unsigned char*)"hello world"));
 	unsigned char* output = new unsigned char[100];
-	output = cipher->encrypt((unsigned char*)"hello world"));
+	output = cipher->encrypt((unsigned char*)"hello world");
 
 	cout << "Output: " << output << endl; 
 
