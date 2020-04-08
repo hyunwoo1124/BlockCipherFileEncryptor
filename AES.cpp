@@ -27,8 +27,8 @@ bool AES::setKey(const unsigned char* keyArray)
 	unsigned int type = keyArray[0];
 	unsigned char *key = new unsigned char[16];
 
-	for (int i  = 1; i < 17; i++) {
-		key[i] = keyArray[i];
+	for (int i  = 0; i < 16; i++) {
+		key[i] = keyArray[i+1];
 	}
 	bool reVal = true;
 
