@@ -69,18 +69,12 @@ int main(int argc, char** argv)
 	}
 	
 	/* Perform encryption */
-	cout << "Testing 2" << endl;
-	/*
-	Question: How do we convert from a unsigned char* to a string and print out to terminal 
-	*/
-	// string output = cipher->encrypt((unsigned char*)"hello world"));
-	// unsigned char* output = new unsigned char[100];
-	// memcpy(output, cipher->encrypt((unsigned char*)"hello world"), 16);
-	// string output= (reinterpret_cast<char*>(cipher->encrypt((unsigned char*)"hello world")));
-	string output(reinterpret_cast<char*>(cipher->encrypt((unsigned char*)"hello world")));
 
-	// cout << "Testing 4" << endl;
-	// cout << "Output: " << output << endl; 
+	// string output = cipher->encrypt((unsigned char*)"hello world"));
+	unsigned char* output = new unsigned char[100];
+	output = cipher->encrypt((unsigned char*)"hello world"));
+
+	cout << "Output: " << output << endl; 
 
 	// /* Perform decryption */
 	// cipher->decrypt(cipherText);	
