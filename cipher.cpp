@@ -64,17 +64,28 @@ int main(int argc, char** argv)
 	 * command line.
 	 */
 	cout << "Testing 1" << endl;
-	if(!cipher->setKey((unsigned char*)"0123456789abcdef")){
+	if(!cipher->setKey((unsigned char*)"00123456789abcdef")){
 		cerr << "Set Key error, code can't compile " << endl;
 	}
 	
+	cerr << "Set key complete" << endl;
+		
 	/* Perform encryption */
 
 	// string output = cipher->encrypt((unsigned char*)"hello world"));
-	unsigned char* output = new unsigned char[100];
-	output = cipher->encrypt((unsigned char*)"hello world");
+	unsigned char* output; //= new unsigned char[100];
+	output = cipher->encrypt((unsigned char*)"hello world12345");
+	
+	if(!cipher->setKey((unsigned char*)"10123456789abcdef")){
+		cerr << "Set Key error, code can't compile " << endl;
+	}
+	unsigned char* outputdec; //= new unsigned char[100];
+	outputdec = cipher->decrypt((unsigned char*)output);
 
-	cout << "Output: " << output << endl; 
+	cerr << "The decrypted text is: " << outputdec << endl;
+	
+	//cout << "Output: " << output << endl; 
+	
 
 	// /* Perform decryption */
 	// cipher->decrypt(cipherText);	
