@@ -4,8 +4,10 @@
 #include "DES.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "iostream"
 #include "fstream"
+
 using namespace std;
 
 int main(int argc, char** argv)
@@ -28,67 +30,65 @@ int main(int argc, char** argv)
 	string inputText = argv[4];
 	string outputText = argv[5];
 
-	// cout << "Testing 1 - 3 " << endl;
+	// print out user input
 	cout << "ciphername: " << ciphername << endl;
 	cout << "key: " << key << endl;
 	cout << "method: " << method << endl;
 	cout << "inputText: " << inputText << endl;
 	cout << "outputText: " << outputText << endl;
 
-	// ifstream inputFile;
-	// inputFile.open (inputText);
-	// if(!inputFile.is_open()){
-	// 	cerr << "File can't be open !!! " <<endl;
-	// }
+	// Read file 
+	FILE * file;
+	unsigned char* textData = new unsigned char[16];
+	file = fopen(inputText.c_str(), "rb");
+	if (file == NULL) {
+		cerr << "Error Occurred " << endl;
+	}
+	
+	while (!feof(file)){
+		fread(textData,sizeof(char*),16,file);
+	}
+	fclose(file);
+	cout << "Element in the Array" << endl;
+	for (int i = 0; i < 16; i++)
+		cout << textData[i] << " ";
+	cout << endl;
 
-	/* Create an instance of the DES cipher */	
 	CipherInterface* cipher = 0;  
 
-	cout << "Testing AES" << endl;
-	cipher = new AES();
-	
-		 
-	/* Error checks */
-	if(!cipher)
-	{
-		fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",	
-		__FILE__, __FUNCTION__, __LINE__);
-		exit(-1);
-	}
-	
-	
-	/* Set the encryption key
-	
-	 * characters. Below is one example.
-	 * Your program should take input from                           
-	 * command line.
-	 */
-	cout << "Testing 1" << endl;
-	if(!cipher->setKey((unsigned char*)"00123456789abcdef")){
-		cerr << "Set Key error, code can't compile " << endl;
-	}
-	
-	cerr << "Set key complete" << endl;
+	if (ciphername == "AES") {
+		cout << "Testing AES" << endl;
+		cipher = new AES();
+		unsigned char* output;
+		unsigned char* outputdec; 
+		if(!cipher)
+		{
+			fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",	
+			__FILE__, __FUNCTION__, __LINE__);
+			exit(-1);
+		}
+		if(!cipher->setKey((unsigned char*)key)){
+				cerr << "Set Key error, code can't compile " << endl;
+			}
+		FILE * file;
+		file = fopen(outputText.c_str(), "wb");
+		if(method == "ENC"){
+			output = cipher->encrypt((unsigned char*)textData);
+			cout << "The encrypted text is: " << output << endl;
+			fwrite(output, sizeof(char), 16,file);
+		}
+		else if(method == "DEC") {
+			outputdec = cipher->decrypt((unsigned char*)textData);
+			cout << "The decrypted text is: " << outputdec << endl;
+			fwrite(outputdec, sizeof(char), 16,file);
+		}
+		else {
+			cout << "Method is Unknown, please recheck your method" << endl;
+			cout << "ENC for encryption" << endl;
+			cout << "DEC for decryption" << endl;
+		}
+		fclose(file);
 		
-	/* Perform encryption */
-
-	// string output = cipher->encrypt((unsigned char*)"hello world"));
-	unsigned char* output; //= new unsigned char[100];
-	output = cipher->encrypt((unsigned char*)"hello world12345");
-	
-	if(!cipher->setKey((unsigned char*)"10123456789abcdef")){
-		cerr << "Set Key error, code can't compile " << endl;
 	}
-	unsigned char* outputdec; //= new unsigned char[100];
-	outputdec = cipher->decrypt((unsigned char*)output);
-
-	cerr << "The decrypted text is: " << outputdec << endl;
-	
-	//cout << "Output: " << output << endl; 
-	
-
-	// /* Perform decryption */
-	// cipher->decrypt(cipherText);	
-	
 	return 0;
 }
