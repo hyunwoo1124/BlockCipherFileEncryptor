@@ -97,10 +97,27 @@ int main(int argc, char** argv)
 		}
 		fclose(file);
 
-	}
-	if (ciphername == "DES") {
+	} else if (ciphername == "DES") {
 		cout << "Testing DES" << endl;
-	}
+		cipher = new DES();
+		if(!cipher) {
+			fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
+		  __FILE__,__FUNCTION__,__LINE__);
+			exit(-1);
+		}
+
+		if (method == "ENC"){
+			cout << "ENCODE" << endl;
+			//TODO: Add ENC DES here
+		} else if (method == "DEC") {
+			cout << "DECODE" << endl;
+			//TODO: Add DEC DES here
+		} else {
+			cout << "Method is Unknown, please recheck your method" << endl;
+			cout << "ENC for encryption" << endl;
+			cout << "DEC for decryption" << endl;
+		}
+ 	}
 
 	return 0;
 }
