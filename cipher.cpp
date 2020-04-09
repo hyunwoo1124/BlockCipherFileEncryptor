@@ -98,5 +98,9 @@ int main(int argc, char** argv)
 		fclose(file);
 
 	}
+	if (ciphername == "DES") {
+		cout << "Testing DES" << endl;
+	}
+
 	return 0;
 }
