@@ -98,14 +98,24 @@ int main(int argc, char** argv)
 			while (!feof(fileRead)){
 				numRead = fread(textData,sizeof(char),16,fileRead);
 				cout << "numRead: " << numRead << endl;
-				if (numRead != 0) {
-
+				if (numRead < 16) {
+					fread(textData,sizeof(char),numRead,fileRead);
+					for (int i = 0; i < numRead; i++)
+						cout << textData[i] << " ";
+					cout << endl;
+					outputEnc = cipher->encrypt((unsigned char*)textData);
+					for (int i = 0; i < 16; i++)
+						cout << textData[i] << " ";
+					cout << endl;
+					fwrite(outputEnc, sizeof(char), numRead,fileWrite);
+					cout << "Output Encrypted " << outputEnc << endl;
 				}
 				outputEnc = cipher->encrypt((unsigned char*)textData);
 				for (int i = 0; i < 16; i++)
 					cout << textData[i] << " ";
+				cout << endl;
 				fwrite(outputEnc, sizeof(char), 16,fileWrite);
-				cout << "The encrypted text is: " << outputEnc << endl;
+				cout << "Output Encrypted " << outputEnc << endl;
 			}
 		}
 		// Check if it is decrypt method
@@ -113,6 +123,7 @@ int main(int argc, char** argv)
 			outputDec = cipher->decrypt((unsigned char*)textData);
 			cout << "The decrypted text is: " << outputDec << endl;
 			fwrite(outputDec, sizeof(char), 16,fileWrite);
+			
 		}
 		// If user choose something else
 		else {
