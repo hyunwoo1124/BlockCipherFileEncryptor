@@ -47,14 +47,8 @@ int main(int argc, char** argv)
 
 	// Read file
 	FILE * file;
-
 	unsigned char* textData = new unsigned char[16];
 	file = fopen(inputText.c_str(), "rb");
-
-	// Getting the string size in the file
-	fseek(file, 0L, SEEK_END);
-	size = ftell(file);
-	
 	if (file == NULL) {
 		cerr << "Error Occurred " << endl;
 	}
@@ -102,6 +96,12 @@ int main(int argc, char** argv)
 		// Write to a file 
 		FILE * file;
 		file = fopen(outputText.c_str(), "wb");
+
+		// Getting string size
+		// fseek(file, 0L, SEEK_END);
+		// usigned const int size = ftell(file);
+		// cout << "Count " << size << endl;
+
 		// Check if it is encrypt method
 		if(method == "ENC"){
 			outputEnc = cipher->encrypt((unsigned char*)textData);
@@ -120,12 +120,14 @@ int main(int argc, char** argv)
 			cout << "ENC for encryption" << endl;
 			cout << "DEC for decryption" << endl;
 		}
-		// Close file after finish writing
 		fclose(file);
 
 	} else if (ciphername == "DES") {
 		cout << "Testing DES" << endl;
 		cipher = new DES();
+		unsigned char* outputEnc;
+		unsigned char* outputDec;
+		
 		if(!cipher) {
 			fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
 		  __FILE__,__FUNCTION__,__LINE__);
@@ -135,9 +137,16 @@ int main(int argc, char** argv)
 		if (method == "ENC"){
 			cout << "ENCODE" << endl;
 			//TODO: Add ENC DES here
+			
+			outputEnc = cipher->encrypt((unsigned char*)textData);
+			cout << "The encrypted text is: " << outputEnc << endl;
+			fwrite(outputEnc, sizeof(char), 16,file);
 		} else if (method == "DEC") {
 			cout << "DECODE" << endl;
 			//TODO: Add DEC DES here
+			outputDec = cipher->decrypt((unsigned char*)textData);
+			cout << "The decrypted text is: " << outputDec << endl;
+			fwrite(outputDec, sizeof(char), 16,file);
 		} else {
 			cout << "Method is Unknown, please recheck your method" << endl;
 			cout << "ENC for encryption" << endl;

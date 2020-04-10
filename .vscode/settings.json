@@ -10,6 +10,8 @@
         "string": "cpp",
         "iosfwd": "cpp",
         "optional": "cpp",
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp"
     }
 }
