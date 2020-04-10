@@ -26,7 +26,7 @@ Execution Prompt
 
     ./cipher AES "00112233445566778899aabbccddeeff" ENC in.txt out.txt
 
-    ./cipher AES "10112233445566778899aabbccddeeff" DEC out.txt plaintext.txt
+    ./cipher AES "00112233445566778899aabbccddeeff" DEC out.txt plaintext.txt
 
     ./cipher DES "0123456789abcdef" ENC in.txt out.txt
 
