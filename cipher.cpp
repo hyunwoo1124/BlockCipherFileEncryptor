@@ -110,33 +110,31 @@ int main(int argc, char** argv)
 			// Saving file data char by char into textData 
 			while (!feof(fileRead)){
 				numRead = fread(textData,sizeof(char),16,fileRead);
-				cout << "numRead: " << numRead << endl;
 				// Padding, If the plaintext is not 16 bytes, fill in empty with 0
-				if (numRead != 16) {
-					for (int i = numRead; i < 16; i++){
-						textData[i] = '0';
-					}
+				if(numRead != 0) {
+					if (numRead != 16 ){
+						for (int i = numRead; i < 16; i++){
+							textData[i] = '0';
+						}
+					} 
+					processText = cipher->encrypt(textData);
+					fwrite(processText, sizeof(char), 16,fileWrite);
+					cout << "Encrypted Text: " << processText << endl;
+					
 				}
-				for (int i = 0; i < 16; i++)
-					cout << textData[i] << " ";
-				cout << endl;
-				processText = cipher->encrypt(textData);
-				fwrite(processText, sizeof(char), 16,fileWrite);
-				cout << "Output Encrypted " << processText << endl;
 			}
 		}
 		// Check if it is decrypt method
 		else if(method == "DEC") {
 			while (!feof(fileRead)){
 				numRead = fread(textData,sizeof(char),16,fileRead);
-				cout << "numRead: " << numRead << endl;
 				if (numRead != 0) {
 					for (int i = 0; i < 16; i++)
 						cout << textData[i] << " ";
 					cout << endl;
 					processText = cipher->decrypt(textData);
 					fwrite(processText, sizeof(char), 16,fileWrite);
-					cout << "Output Encrypted " << processText << endl;
+					cout << "Decrypted Text: " << processText << endl;
 				}
 			}
 		}
