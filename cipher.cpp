@@ -46,26 +46,24 @@ int main(int argc, char** argv)
 	cout << "outputText: " << outputText << endl;
 
 	// Read file
-	FILE * file;
+	FILE * fileRead;
 	unsigned char* textData = new unsigned char[16];
-	file = fopen(inputText.c_str(), "rb");
-	if (file == NULL) {
+	fileRead = fopen(inputText.c_str(), "rb");
+	if (fileRead == NULL) {
+		cerr << "Error Occurred " << endl;
+	}
+		
+	// Write to a file 
+	FILE * fileWrite;
+	fileWrite = fopen(outputText.c_str(), "wb");
+	if (fileWrite == NULL) {
 		cerr << "Error Occurred " << endl;
 	}
 
-	// Saving file data char by char into textData 
-	while (!feof(file)){
-		fread(textData,sizeof(char),16,file);
-	}
-
-	// Close file after finish reading
-	fclose(file);
-
-	//Print out element of the array to make sure we saved correctly
-	cout << "Element in the Array" << endl;
-	for (int i = 0; i < 16; i++)
-		cout << textData[i] << " ";
-	cout << endl;
+	// cout << "Element in the Array" << endl;
+	// for (int i = 0; i < 16; i++)
+	// 	cout << textData[i] << " ";
+	// cout << endl;
 
 	// Initializing cipher
 	CipherInterface* cipher = 0;
@@ -92,27 +90,29 @@ int main(int argc, char** argv)
 		if(!cipher->setKey((unsigned char*)key)){
 				cerr << "Set Key error, code can't compile " << endl;
 			}
-		
-		// Write to a file 
-		FILE * file;
-		file = fopen(outputText.c_str(), "wb");
 
-		// Getting string size
-		// fseek(file, 0L, SEEK_END);
-		// usigned const int size = ftell(file);
-		// cout << "Count " << size << endl;
-
+		unsigned int numRead = 0;
 		// Check if it is encrypt method
 		if(method == "ENC"){
-			outputEnc = cipher->encrypt((unsigned char*)textData);
-			cout << "The encrypted text is: " << outputEnc << endl;
-			fwrite(outputEnc, sizeof(char), 16,file);
+			// Saving file data char by char into textData 
+			while (!feof(fileRead)){
+				numRead = fread(textData,sizeof(char),16,fileRead);
+				cout << "numRead: " << numRead << endl;
+				if (numRead != 0) {
+
+				}
+				outputEnc = cipher->encrypt((unsigned char*)textData);
+				for (int i = 0; i < 16; i++)
+					cout << textData[i] << " ";
+				fwrite(outputEnc, sizeof(char), 16,fileWrite);
+				cout << "The encrypted text is: " << outputEnc << endl;
+			}
 		}
 		// Check if it is decrypt method
 		else if(method == "DEC") {
 			outputDec = cipher->decrypt((unsigned char*)textData);
 			cout << "The decrypted text is: " << outputDec << endl;
-			fwrite(outputDec, sizeof(char), 16,file);
+			fwrite(outputDec, sizeof(char), 16,fileWrite);
 		}
 		// If user choose something else
 		else {
@@ -120,39 +120,41 @@ int main(int argc, char** argv)
 			cout << "ENC for encryption" << endl;
 			cout << "DEC for decryption" << endl;
 		}
-		fclose(file);
+		fclose(fileWrite);
+		fclose(fileRead);
 
-	} else if (ciphername == "DES") {
-		cout << "Testing DES" << endl;
-		cipher = new DES();
-		unsigned char* outputEnc;
-		unsigned char* outputDec;
+	} 
+	// else if (ciphername == "DES") {
+	// 	cout << "Testing DES" << endl;
+	// 	cipher = new DES();
+	// 	unsigned char* outputEnc;
+	// 	unsigned char* outputDec;
 		
-		if(!cipher) {
-			fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
-		  __FILE__,__FUNCTION__,__LINE__);
-			exit(-1);
-		}
+	// 	if(!cipher) {
+	// 		fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
+	// 	  __FILE__,__FUNCTION__,__LINE__);
+	// 		exit(-1);
+	// 	}
 
-		if (method == "ENC"){
-			cout << "ENCODE" << endl;
-			//TODO: Add ENC DES here
+	// 	if (method == "ENC"){
+	// 		cout << "ENCODE" << endl;
+	// 		//TODO: Add ENC DES here
 			
-			outputEnc = cipher->encrypt((unsigned char*)textData);
-			cout << "The encrypted text is: " << outputEnc << endl;
-			fwrite(outputEnc, sizeof(char), 16,file);
-		} else if (method == "DEC") {
-			cout << "DECODE" << endl;
-			//TODO: Add DEC DES here
-			outputDec = cipher->decrypt((unsigned char*)textData);
-			cout << "The decrypted text is: " << outputDec << endl;
-			fwrite(outputDec, sizeof(char), 16,file);
-		} else {
-			cout << "Method is Unknown, please recheck your method" << endl;
-			cout << "ENC for encryption" << endl;
-			cout << "DEC for decryption" << endl;
-		}
- 	}
+	// 		outputEnc = cipher->encrypt((unsigned char*)textData);
+	// 		cout << "The encrypted text is: " << outputEnc << endl;
+	// 		fwrite(outputEnc, sizeof(char), 16,file);
+	// 	} else if (method == "DEC") {
+	// 		cout << "DECODE" << endl;
+	// 		//TODO: Add DEC DES here
+	// 		outputDec = cipher->decrypt((unsigned char*)textData);
+	// 		cout << "The decrypted text is: " << outputDec << endl;
+	// 		fwrite(outputDec, sizeof(char), 16,file);
+	// 	} else {
+	// 		cout << "Method is Unknown, please recheck your method" << endl;
+	// 		cout << "ENC for encryption" << endl;
+	// 		cout << "DEC for decryption" << endl;
+	// 	}
+ 	// }
 
 	return 0;
 }
