@@ -14,7 +14,6 @@ bool AES::setKey(const unsigned char* keyArray)
 	// you are encrypting or decrypting when setting the key.
 	// That is, when encrypting you use function AES_set_encrypt_key(...)
 	// and when decrypting AES_set_decrypt_key(...).
-	//
 	// One way to solve this problem is to pass in a 17 byte key, where
 	// the first byte is used to indicate whether we are encrypting or
 	// decrypting. E.g., if the first byte is 0, then use AES_set_encrypt_key(...).

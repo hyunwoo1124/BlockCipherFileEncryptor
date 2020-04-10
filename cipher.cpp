@@ -128,9 +128,15 @@ int main(int argc, char** argv)
 		if (method == "ENC"){
 			cout << "ENCODE" << endl;
 			//TODO: Add ENC DES here
+			outputEnc = cipher->encrypt((unsigned char*)textData);
+			cout << "The encrypted text is: " << outputEnc << endl;
+			fwrite(outputEnc, sizeof(char), 16,file);
 		} else if (method == "DEC") {
 			cout << "DECODE" << endl;
 			//TODO: Add DEC DES here
+			outputDec = cipher->decrypt((unsigned char*)textData);
+			cout << "The decrypted text is: " << outputDec << endl;
+			fwrite(outputDec, sizeof(char), 16,file);
 		} else {
 			cout << "Method is Unknown, please recheck your method" << endl;
 			cout << "ENC for encryption" << endl;
