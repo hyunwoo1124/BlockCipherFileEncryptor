@@ -47,19 +47,21 @@ int main(int argc, char** argv)
 
 	// Read file
 	FILE * file;
-	unsigned int size = 0;
-	file = fopen(inputText.c_str(), "rb");
-	fseek(file, 0, SEEK_END);
-	size = ftell(file);
 
-	unsigned char* textData;
+	unsigned char* textData = new unsigned char[16];
+	file = fopen(inputText.c_str(), "rb");
+
+	// Getting the string size in the file
+	fseek(file, 0L, SEEK_END);
+	size = ftell(file);
+	
 	if (file == NULL) {
 		cerr << "Error Occurred " << endl;
 	}
 
 	// Saving file data char by char into textData 
 	while (!feof(file)){
-		fread(textData,sizeof(char),size,file);
+		fread(textData,sizeof(char),16,file);
 	}
 
 	// Close file after finish reading
@@ -75,73 +77,73 @@ int main(int argc, char** argv)
 	CipherInterface* cipher = 0;
 
 	// Checking if method is AES or DES 
-	// if (ciphername == "AES") {
-	// 	// Create an instance of AES
-	// 	cout << "Testing AES" << endl;
-	// 	cipher = new AES();
+	if (ciphername == "AES") {
+		// Create an instance of AES
+		cout << "Testing AES" << endl;
+		cipher = new AES();
 
-	// 	// Creating two temp variable to store encrypted and decrypted text 
-	// 	unsigned char* outputEnc;
-	// 	unsigned char* outputDec;
+		// Creating two temp variable to store encrypted and decrypted text 
+		unsigned char* outputEnc;
+		unsigned char* outputDec;
 		
-	// 	// Check if cipher is successfully created
-	// 	if(!cipher)
-	// 	{
-	// 		fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
-	// 		__FILE__, __FUNCTION__, __LINE__);
-	// 		exit(-1);
-	// 	}
+		// Check if cipher is successfully created
+		if(!cipher)
+		{
+			fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
+			__FILE__, __FUNCTION__, __LINE__);
+			exit(-1);
+		}
 
-	// 	// Set key will check whether the key is for encryption or decryptiion
-	// 	if(!cipher->setKey((unsigned char*)key)){
-	// 			cerr << "Set Key error, code can't compile " << endl;
-	// 		}
+		// Set key will check whether the key is for encryption or decryptiion
+		if(!cipher->setKey((unsigned char*)key)){
+				cerr << "Set Key error, code can't compile " << endl;
+			}
 		
-	// 	// Write to a file 
-	// 	FILE * file;
-	// 	file = fopen(outputText.c_str(), "wb");
-	// 	// Check if it is encrypt method
-	// 	if(method == "ENC"){
-	// 		outputEnc = cipher->encrypt((unsigned char*)textData);
-	// 		cout << "The encrypted text is: " << outputEnc << endl;
-	// 		fwrite(outputEnc, sizeof(char), 16,file);
-	// 	}
-	// 	// Check if it is decrypt method
-	// 	else if(method == "DEC") {
-	// 		outputDec = cipher->decrypt((unsigned char*)textData);
-	// 		cout << "The decrypted text is: " << outputDec << endl;
-	// 		fwrite(outputDec, sizeof(char), 16,file);
-	// 	}
-	// 	// If user choose something else
-	// 	else {
-	// 		cout << "Method is Unknown, please recheck your method" << endl;
-	// 		cout << "ENC for encryption" << endl;
-	// 		cout << "DEC for decryption" << endl;
-	// 	}
-	// 	// Close file after finish writing
-	// 	fclose(file);
+		// Write to a file 
+		FILE * file;
+		file = fopen(outputText.c_str(), "wb");
+		// Check if it is encrypt method
+		if(method == "ENC"){
+			outputEnc = cipher->encrypt((unsigned char*)textData);
+			cout << "The encrypted text is: " << outputEnc << endl;
+			fwrite(outputEnc, sizeof(char), 16,file);
+		}
+		// Check if it is decrypt method
+		else if(method == "DEC") {
+			outputDec = cipher->decrypt((unsigned char*)textData);
+			cout << "The decrypted text is: " << outputDec << endl;
+			fwrite(outputDec, sizeof(char), 16,file);
+		}
+		// If user choose something else
+		else {
+			cout << "Method is Unknown, please recheck your method" << endl;
+			cout << "ENC for encryption" << endl;
+			cout << "DEC for decryption" << endl;
+		}
+		// Close file after finish writing
+		fclose(file);
 
-	// } else if (ciphername == "DES") {
-	// 	cout << "Testing DES" << endl;
-	// 	cipher = new DES();
-	// 	if(!cipher) {
-	// 		fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
-	// 	  __FILE__,__FUNCTION__,__LINE__);
-	// 		exit(-1);
-	// 	}
+	} else if (ciphername == "DES") {
+		cout << "Testing DES" << endl;
+		cipher = new DES();
+		if(!cipher) {
+			fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
+		  __FILE__,__FUNCTION__,__LINE__);
+			exit(-1);
+		}
 
-	// 	if (method == "ENC"){
-	// 		cout << "ENCODE" << endl;
-	// 		//TODO: Add ENC DES here
-	// 	} else if (method == "DEC") {
-	// 		cout << "DECODE" << endl;
-	// 		//TODO: Add DEC DES here
-	// 	} else {
-	// 		cout << "Method is Unknown, please recheck your method" << endl;
-	// 		cout << "ENC for encryption" << endl;
-	// 		cout << "DEC for decryption" << endl;
-	// 	}
- 	// }
+		if (method == "ENC"){
+			cout << "ENCODE" << endl;
+			//TODO: Add ENC DES here
+		} else if (method == "DEC") {
+			cout << "DECODE" << endl;
+			//TODO: Add DEC DES here
+		} else {
+			cout << "Method is Unknown, please recheck your method" << endl;
+			cout << "ENC for encryption" << endl;
+			cout << "DEC for decryption" << endl;
+		}
+ 	}
 
 	return 0;
 }
