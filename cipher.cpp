@@ -20,14 +20,14 @@ int main(int argc, char** argv)
 	 * NOTE: due to the incomplete skeleton, the code may crash or
 	 * misbehave.
 	 */
-	 // Check the number of parameters is correct
-	 if (argc < 6) {
-			 // Tell the user how to run the program
-			 std::cerr << "Usage: " << argv[0] << " <CIPHER NAME> <KEY> <ENC/DEC>" <<
-			 " <INPUT FILE> <OUTPUT FILE>" << std::endl;
-			 // close program because incorrect parameters
-			 return 1;
-	 }
+	// Check the number of parameters is correct
+	if (argc < 6) {
+		// Tell the user how to run the program
+		std::cerr << "Usage: " << argv[0] << " <CIPHER NAME> <KEY> <ENC/DEC>" <<
+			" <INPUT FILE> <OUTPUT FILE>" << std::endl;
+		// close program because incorrect parameters
+		return 1;
+	}
 
 	string ciphername = argv[1];
 	// Since we are passiing const unsigned char* in the setKey function
@@ -45,9 +45,10 @@ int main(int argc, char** argv)
 	cout << "inputText: " << inputText << endl;
 	cout << "outputText: " << outputText << endl;
 
+	unsigned char* textData = new unsigned char[8];
+
 	// Read file
 	FILE * fileRead;
-	unsigned char* textData = new unsigned char[16];
 	fileRead = fopen(inputText.c_str(), "rb");
 	if (fileRead == NULL) {
 		cerr << "Error Occurred " << endl;
@@ -60,24 +61,32 @@ int main(int argc, char** argv)
 		cerr << "Error Occurred " << endl;
 	}
 
-	// cout << "Element in the Array" << endl;
-	// for (int i = 0; i < 16; i++)
-	// 	cout << textData[i] << " ";
-	// cout << endl;
-
 	// Initializing cipher
-	CipherInterface* cipher = 0;
+	CipherInterface* cipher = NULL;
 
+	// Checking if method is AES or DES 
 	// Checking if method is AES or DES 
 	if (ciphername == "AES") {
 		// Create an instance of AES
 		cout << "Testing AES" << endl;
 		cipher = new AES();
 
-		// Creating two temp variable to store encrypted and decrypted text 
-		unsigned char* outputEnc;
-		unsigned char* outputDec;
+		// Creating a new key with a byte in front to determine encrypt and decrypt
+		size_t size = int(*key);
+		unsigned char* newKey = new unsigned char[size+1];
+		if (method == "ENC"){
+			newKey[0] = '0';
+			for (int i = 0; i < size; i++)
+				newKey[i+1] = key[i];
+		}
+		else{
+			newKey[0] = '1';
+			for (int i = 0; i < size; i++)
+				newKey[i+1] = key[i];
+		}
 		
+		cout << "New Key: " << newKey << endl;
+
 		// Check if cipher is successfully created
 		if(!cipher)
 		{
@@ -85,11 +94,15 @@ int main(int argc, char** argv)
 			__FILE__, __FUNCTION__, __LINE__);
 			exit(-1);
 		}
+		
+		// Creating two temp variable to store encrypted and decrypted text 
+		unsigned char* processText;
+		textData = new unsigned char[16];
 
 		// Set key will check whether the key is for encryption or decryptiion
-		if(!cipher->setKey((unsigned char*)key)){
-				cerr << "Set Key error, code can't compile " << endl;
-			}
+		if(!cipher->setKey((unsigned char*)newKey)){
+			cerr << "Set Key error, code can't compile " << endl;
+		}
 
 		unsigned int numRead = 0;
 		// Check if it is encrypt method
@@ -98,21 +111,18 @@ int main(int argc, char** argv)
 			while (!feof(fileRead)){
 				numRead = fread(textData,sizeof(char),16,fileRead);
 				cout << "numRead: " << numRead << endl;
-				if (numRead < 16) {
-					fread(textData,sizeof(char),numRead,fileRead);
-					for (int i = 0; i < numRead; i++)
-						cout << textData[i] << " ";
-					cout << endl;
-					outputEnc = cipher->encrypt((unsigned char*)textData);
-					fwrite(outputEnc, sizeof(char), numRead,fileWrite);
-					cout << "Output Encrypted " << outputEnc << endl;
+				// Padding, If the plaintext is not 16 bytes, fill in empty with 0
+				if (numRead != 16) {
+					for (int i = numRead; i < 16; i++){
+						textData[i] = '0';
+					}
 				}
-				outputEnc = cipher->encrypt((unsigned char*)textData);
 				for (int i = 0; i < 16; i++)
 					cout << textData[i] << " ";
 				cout << endl;
-				fwrite(outputEnc, sizeof(char), 16,fileWrite);
-				cout << "Output Encrypted " << outputEnc << endl;
+				processText = cipher->encrypt(textData);
+				fwrite(processText, sizeof(char), 16,fileWrite);
+				cout << "Output Encrypted " << processText << endl;
 			}
 		}
 		// Check if it is decrypt method
@@ -120,26 +130,15 @@ int main(int argc, char** argv)
 			while (!feof(fileRead)){
 				numRead = fread(textData,sizeof(char),16,fileRead);
 				cout << "numRead: " << numRead << endl;
-				if (numRead < 16) {
-					fread(textData,sizeof(char),numRead,fileRead);
-					for (int i = 0; i < numRead; i++)
+				if (numRead != 0) {
+					for (int i = 0; i < 16; i++)
 						cout << textData[i] << " ";
 					cout << endl;
-					outputDec = cipher->decrypt((unsigned char*)textData);
-					fwrite(outputDec, sizeof(char), numRead,fileWrite);
-					cout << "Output Encrypted " << outputDec << endl;
+					processText = cipher->decrypt(textData);
+					fwrite(processText, sizeof(char), 16,fileWrite);
+					cout << "Output Encrypted " << processText << endl;
 				}
-				outputDec = cipher->decrypt((unsigned char*)textData);
-				for (int i = 0; i < 16; i++)
-					cout << textData[i] << " ";
-				cout << endl;
-				fwrite(outputDec, sizeof(char), 16,fileWrite);
-				cout << "Output Encrypted " << outputDec << endl;
 			}
-			// outputDec = cipher->decrypt((unsigned char*)textData);
-			// cout << "The decrypted text is: " << outputDec << endl;
-			// fwrite(outputDec, sizeof(char), 16,fileWrite);
-			
 		}
 		// If user choose something else
 		else {
@@ -147,41 +146,64 @@ int main(int argc, char** argv)
 			cout << "ENC for encryption" << endl;
 			cout << "DEC for decryption" << endl;
 		}
-		fclose(fileWrite);
 		fclose(fileRead);
+		fclose(fileWrite);
+	} else if (ciphername == "DES") {
 
-	} 
-	// else if (ciphername == "DES") {
-	// 	cout << "Testing DES" << endl;
-	// 	cipher = new DES();
-	// 	unsigned char* outputEnc;
-	// 	unsigned char* outputDec;
-		
-	// 	if(!cipher) {
-	// 		fprintf(stderr, "ERROR [%s %s %d]: could not allocate memory\n",
-	// 	  __FILE__,__FUNCTION__,__LINE__);
-	// 		exit(-1);
-	// 	}
-
-	// 	if (method == "ENC"){
-	// 		cout << "ENCODE" << endl;
-	// 		//TODO: Add ENC DES here
+		cerr << "In DES" << endl;
+		cipher =new DES();
+		if(cipher == NULL){
+			fprintf(stderr, "Error not allocated DES\n");
+		}
 			
-	// 		outputEnc = cipher->encrypt((unsigned char*)textData);
-	// 		cout << "The encrypted text is: " << outputEnc << endl;
-	// 		fwrite(outputEnc, sizeof(char), 16,file);
-	// 	} else if (method == "DEC") {
-	// 		cout << "DECODE" << endl;
-	// 		//TODO: Add DEC DES here
-	// 		outputDec = cipher->decrypt((unsigned char*)textData);
-	// 		cout << "The decrypted text is: " << outputDec << endl;
-	// 		fwrite(outputDec, sizeof(char), 16,file);
-	// 	} else {
-	// 		cout << "Method is Unknown, please recheck your method" << endl;
-	// 		cout << "ENC for encryption" << endl;
-	// 		cout << "DEC for decryption" << endl;
-	// 	}
- 	// }
+		if(!cipher->setKey((unsigned char*)key)){
+			cerr << "Set Key error, code can't compile " << endl;
+		}
+		cerr << "Finished setting the key!" << endl;	
+		unsigned char* processedText = NULL;
+	        int numWritten;
+		// Saving file data char by char into textData 
+		while (!feof(fileRead)){
+
+
+			int numRead  = fread(textData,sizeof(char),8,fileRead);
+
+			//  Not reached the end of the file
+			if(numRead != 0)
+			{
+				// If numRead < 8 --? Padd
+				// Encrypt
+				// Write to the output
+
+				for(int i = numRead ; i < 8; i++){
+					textData[i] = 0;
+				}
+
+				if(method == "ENC"){
+					processedText = cipher->encrypt((const unsigned char*)textData);
+				}
+				else{
+					processedText = cipher->decrypt((const unsigned char*)textData);
+				}
+
+				numWritten =  fwrite(processedText, sizeof(char), 8, fileWrite);
+
+				if(numWritten < 8) { fprintf(stderr, "Failed to write the output file!\n"); }
+
+
+			}
+			//Encrypt a block
+			//Write a block
+
+		}
+
+		// Close file after finish reading
+		fclose(fileRead);
+		fclose(fileWrite);
+
+
+
+	}
 
 	return 0;
 }
